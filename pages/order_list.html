@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order List</title>
+    <link rel="stylesheet" type="text/css" href="styles/common.css" />
+    <link rel="stylesheet" type="text/css" href="styles/order-style.css" />
+</head>
+
+<body>
+    <div class="banner-top", id="user-banner">
+        <div class="div-inline">User ID: <div id="user-id-blank"></div>
+        </div>
+        <div class="div-inline">User Name: <div id="user-name-blank"></div>
+        </div>
+        <div class="div-inline">Login Expiration Time: <div id="expiration-tate-blank"></div>
+        </div>
+    </div>
+    <div class="main-info-container" id="order-container">
+        <h1>Ordered Tickets</h1>
+        <div class="row-flex-container" id="action-button-container">
+            <button class="button-medium" id="new-trans-button-top">+ New Transaction</button>
+            <button class="button-medium" id="del-button" hidden>- Delete Selected</button>
+        </div>
+        <table class="info-table" id="order-table">
+            <tr>
+                <th></th>
+                <th>Order ID</th>
+                <th>Ticket ID</th>
+                <th>Order Time</th>
+                <th>Place of Departure</th>
+                <th>Destination</th>
+                <th>Validation Time</th>
+            </tr>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td>31a35</td>
+                <td>adasdadd</td>
+                <td>3:18</td>
+                <td>AAAAA</td>
+                <td>ASDASASSD</td>
+                <td>11:45</td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

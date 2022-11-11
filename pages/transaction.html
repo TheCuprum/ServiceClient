@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Transaction</title>
+    <link rel="stylesheet" type="text/css" href="styles/common.css" />
+    <link rel="stylesheet" type="text/css" href="styles/trans-style.css" />
+</head>
+
+<body>
+    <div class="banner-top" , id="user-banner">
+        <div class="div-inline">User ID: <div id="user-id-blank"></div>
+        </div>
+        <div class="div-inline">User Name: <div id="user-name-blank"></div>
+        </div>
+        <div class="div-inline">Login Expiration Time: <div id="expiration-tate-blank"></div>
+        </div>
+    </div>
+    <div class="main-info-container" id="transaction-container">
+        <h1>Avaliable Tickets</h1>
+        <table class="info-table" id="ticket-table">
+            <tr>
+                <th></th>
+                <th>Ticket ID</th>
+                <th>Place of Departure</th>
+                <th>Destination</th>
+                <th>Validation Time</th>
+            </tr>
+            <tr>
+                <td><input type="radio"></td>
+                <td>adasdadd</td>
+                <td>AAAAA</td>
+                <td>ASDASASSD</td>
+                <td>11:45</td>
+            </tr>
+        </table>
+    </div>
+    <div class="banner-bottom">
+        <div class="row-flex-container" id="payment-div">
+            <div class="column-flex-container" id="action-button-container">
+                <button class="button-medium" id="choose-button">Choose Ticket</button>
+                <button class="button-medium" id="confirm-button" hidden>Buy Ticket</button>
+                <button class="button-medium" id="discard-button" hidden>Discard</button>
+            </div>
+            <div id="payment-msg-div" hidden>
+                <p>2114123413241234324</p>
+                <p>2114123413241234324</p>
+                <p>2114123413241234324</p>
+                <p>2114123413241234324</p>
+                <p>2114123413241234324</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

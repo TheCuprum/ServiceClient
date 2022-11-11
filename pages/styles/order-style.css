@@ -1,0 +1,27 @@
+h1 {
+    text-align: center;
+}
+
+#order-container::before {
+    content: '';
+    display: block;
+    height: 1rem;
+}
+
+#order-table {
+    text-align: center;
+}
+
+/* 
+#new-trans-button-top {
+    float: right;
+} */
+
+#action-button-container {
+    justify-content: flex-end;
+    
+}
+
+#action-button-container * {
+    margin-left: 5px;
+}

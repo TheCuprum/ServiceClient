@@ -1,7 +1,7 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
 
 const path = require('path');
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -13,8 +13,14 @@ const stylesHandler = isProduction ? MiniCssExtractPlugin.loader : 'style-loader
 
 
 const config = {
-    entry: './src/index.ts',
+    entry: {
+        index: './src/index.ts',
+        login: './src/login.ts',
+        order_list: './src/order_list.ts',
+        transaction: './src/transaction.ts',
+    },
     output: {
+        filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
     },
     devServer: {
@@ -23,11 +29,29 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'index.html',
+            template: 'pages/index.html',
+            filename: 'index.html',
+            chunks: ['index'],
+        }),
+        new HtmlWebpackPlugin({
+            template: 'pages/login.html',
+            filename: 'login.html',
+            chunks: ['login'],
+        }),
+        new HtmlWebpackPlugin({
+            template: 'pages/order_list.html',
+            filename: 'order_list.html',
+            chunks: ['order_list'],
+        }),
+        new HtmlWebpackPlugin({
+            template: 'pages/transaction.html',
+            filename: 'transaction.html',
+            chunks: ['transaction'],
         }),
         new CopyPlugin({
             patterns: [
-                { from: "public", to: "" },
+                // { from: 'public', to: './' },
+                { from: 'pages/styles', to: 'styles' },
             ],
             options: {
                 concurrency: 100,

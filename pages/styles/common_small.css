@@ -1,0 +1,38 @@
+.div-inline * {
+    display: inline-block;
+}
+
+.element-inline {
+    display: inline-block;
+}
+
+button:hover {
+    color: black;
+    background-color: lightgray;
+}
+
+button:active {
+    color: whitesmoke;
+    background-color: black;
+}
+
+.button-medium {
+    padding: 5px;
+    margin: 3px 0px;
+
+    border-radius: 0%;
+    border-width: 2px;
+    background-color: transparent;
+    color: black;
+
+    font: inherit;
+}
+
+.button-small {
+    border-radius: 0%;
+    border-width: 1px;
+    background-color: transparent;
+    color: black;
+
+    font: inherit;
+}
