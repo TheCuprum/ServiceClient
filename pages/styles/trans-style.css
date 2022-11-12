@@ -8,7 +8,7 @@ h1 {
 }
 
 #payment-div {
-    flex-direction: row;
+    flex-direction: row-reverse;
     justify-content: space-between;
     padding-left: 20px;
     padding-right: 20px;
