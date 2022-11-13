@@ -1,3 +1,5 @@
+import { checkToken, PageInfo, parseToken, regPageFlip, updateBanner } from "./util";
+
 namespace transactionPage {
 
     const userIdBlank = document.getElementById("user-id-blank") as HTMLDivElement;
@@ -8,10 +10,28 @@ namespace transactionPage {
 
     const previousTransPageButton = document.getElementById("previous-trans-page-button") as HTMLButtonElement;
     const nextTransPageButton = document.getElementById("next-trans-page-button") as HTMLButtonElement;
-    const transPageNumber = document.getElementById("trans-page-number") as HTMLInputElement;
+    const transPageNumberInput = document.getElementById("trans-page-number") as HTMLInputElement;
 
     const chooseButton = document.getElementById("choose-button") as HTMLButtonElement;
     const confirmButton = document.getElementById("confirm-button") as HTMLButtonElement;
     const deleteButton = document.getElementById("discard-button") as HTMLButtonElement;
 
+    checkToken(window);
+    // TODO
+    var tokenObj = parseToken("");
+    var pageInfo: PageInfo = new PageInfo();
+
+
+    updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
+
+
+
+    
+    regPageFlip(
+        transPageNumberInput,
+        previousTransPageButton,
+        nextTransPageButton,
+        pageInfo,
+        (currentPage: number, nextPage: number) => {
+        });
 }

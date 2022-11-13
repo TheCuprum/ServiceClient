@@ -10,6 +10,8 @@
     "serve": "webpack serve"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
+    "@types/js-cookie": "^3.0.2",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
@@ -23,6 +25,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "crypto-js": "^4.1.1",
     "js-cookie": "^3.0.1"
   }
 }
