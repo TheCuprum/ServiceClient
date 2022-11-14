@@ -1,7 +1,6 @@
 import {checkToken} from "./util";
 
-console.log("Hello World!");
-
 namespace index {
-    checkToken(window);
+    // console.log("Hello World!");
+    checkToken(window, () => {window.location.href = "order_list.html"});
 }

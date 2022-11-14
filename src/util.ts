@@ -17,6 +17,13 @@ export function parseToken(token: string): ParsedToken {
     return retObj;
 }
 
+export function removeAllChildren(element: HTMLElement, startIndex: number = 0) {
+    let children = element.childNodes;
+    for (let index = children.length - 1; index >= startIndex; index--) {
+        children[index].remove();
+    }
+}
+
 export function updateBanner(userIdBlank: HTMLDivElement,
     userNameBlank: HTMLDivElement,
     expirationTimeBlank: HTMLDivElement,
@@ -26,16 +33,9 @@ export function updateBanner(userIdBlank: HTMLDivElement,
     removeAllChildren(userIdBlank);
     removeAllChildren(userNameBlank);
     removeAllChildren(expirationTimeBlank);
-    userIdBlank.append(document.createTextNode(userId));
-    userNameBlank.append(document.createTextNode(userName));
-    expirationTimeBlank.append(document.createTextNode(expirationTime));
-}
-
-export function removeAllChildren(element: HTMLElement) {
-    let children = element.childNodes;
-    for (let index = children.length - 1; index >= 0; index--) {
-        children[index].remove();
-    }
+    userIdBlank.appendChild(document.createTextNode(userId));
+    userNameBlank.appendChild(document.createTextNode(userName));
+    expirationTimeBlank.appendChild(document.createTextNode(expirationTime));
 }
 
 export function checkToken(window: Window,
@@ -44,8 +44,6 @@ export function checkToken(window: Window,
     window.onload = () => {
         let to = jsCookie.get("token");
         if (to == null) {
-            console.log("reject");
-
             rejectCallback();
         } else {
             acceptCallback();
@@ -85,4 +83,30 @@ export function regPageFlip(pageInput: HTMLInputElement, previousButton: HTMLBut
             refreshCallback(pageInfo.pageNumber - 1, pageInfo.pageNumber);
         }
     });
+}
+
+// queryTicketList(pageInfo.pageNumber, ticketTable, TICKET_TABLE_KEYS, ticketRowCallback)
+export function updateTable(table: HTMLTableElement, keys: string[], values: object[], customElements: Map<string, CallableFunction>,
+    rowCallback: CallableFunction = (tr: HTMLTableRowElement, t: HTMLTableElement) => { }) {
+    removeAllChildren(table, 1);
+    for (let rowNum = 1; rowNum <= values.length; rowNum++) {
+        let tableRow = document.createElement("tr");
+
+        let rowMap: Map<string, string> = new Map(Object.entries(values[rowNum - 1]));
+        for (let index = 0; index < keys.length; index++) {
+            let tableData = document.createElement("td");
+            let cellValue = rowMap.get(keys[index]);
+            if (cellValue == undefined) {
+                let generator = customElements.get(keys[index]);
+                if (generator != undefined)
+                    tableData.append(generator(rowNum, index));
+            } else {
+                tableData.appendChild(
+                    document.createTextNode(cellValue));
+            }
+            tableRow.appendChild(tableData);
+        }
+        table.appendChild(tableRow);
+        rowCallback(tableRow, table);
+    }
 }

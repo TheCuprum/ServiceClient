@@ -10,7 +10,8 @@
 
 <body>
     <div class="login-box" id="web-login-box">
-        <h1>User Login</h1>
+        <h1 id="login-heading">User Login</h1>
+        <h1 id="sign-up-heading" hidden>User Sign Up</h1>
         <table id="login-input">
             <tr>
                 <td>
@@ -25,12 +26,21 @@
                     Password
                 </td>
                 <td>
-                    <input type="password" name="password-input" id="password-input">
+                    <input type="password" name="password-input" id="password-input" autocomplete="off">
+                </td>
+            </tr>
+            <tr id="sign-up-row" hidden>
+                <td>
+                    Confirm Password
+                </td>
+                <td>
+                    <input type="password" name="confirm-password-input" id="confirm-password-input" autocomplete="off">
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
+                    <button class="button-small" id="sign-up-button">Sign Up</button>
                     <button class="button-small" id="login-button">Login</button>
                 </td>
             </tr>

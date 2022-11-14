@@ -1,4 +1,5 @@
 import { BACKEND_ADDRESS, ORDER_TABLE_KEYS } from "./config";
+import { Order } from "./datatypes";
 import { checkToken, PageInfo, parseToken, regPageFlip, updateBanner } from "./util";
 
 namespace orderListPage {
@@ -19,6 +20,7 @@ namespace orderListPage {
     var pageInfo: PageInfo = new PageInfo();
     var checkedNumber = 0;
     var checkboxElements: HTMLInputElement[] = [];
+    var orderList: Order[];
 
     const orderRowCallback = (row: HTMLTableRowElement, table: HTMLTableElement) => {
         if (typeof (row.childNodes[0], HTMLInputElement)) {
@@ -51,6 +53,10 @@ namespace orderListPage {
         checkboxElements = []; // monkey patch 
     }
 
+    function sendDeleteRequest(order: Order) {
+        //TODO: 
+    }
+
     checkToken(window);
     // TODO
     var tokenObj = parseToken("");
@@ -62,8 +68,17 @@ namespace orderListPage {
     // and store all select inputs to []
 
     // TODO: add listener
-    newTransactionButtonTop.addEventListener("click", (ev: Event) => { });
-    deleteButton.addEventListener("click", (ev: Event) => { });
+    newTransactionButtonTop.addEventListener("click", (ev: Event) => {
+        window.location.href = "transaction.html";
+    });
+    deleteButton.addEventListener("click", (ev: Event) => {
+        for (let index = 0; index < checkboxElements.length; index++) {
+            if (checkboxElements[index].checked) {
+                // TODO
+                sendDeleteRequest(orderList[index]);
+            }
+        }
+    });
 
     regPageFlip(
         orderPageNumberInput,
@@ -71,6 +86,7 @@ namespace orderListPage {
         nextOrderPageButton,
         pageInfo,
         (currentPage: number, nextPage: number) => {
-            queryOrderedList(nextPage, orderTable, ORDER_TABLE_KEYS, orderRowCallback);
+            if (currentPage != nextPage)
+                queryOrderedList(nextPage, orderTable, ORDER_TABLE_KEYS, orderRowCallback);
         });
 }
