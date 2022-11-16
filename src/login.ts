@@ -1,4 +1,4 @@
-import { BACKEND_ADDRESS, PASSWORD_SALT } from "./config";
+import { ACCOUNT_ADDRESS, PASSWORD_SALT } from "./config";
 import { checkToken } from "./util";
 import SHA256 from "crypto-js/sha256";
 
@@ -15,13 +15,49 @@ namespace loginPage {
 
     async function sendLoginRequest(username: string, hashedPassword: string) {
         // TODO: fetch();
-        BACKEND_ADDRESS;
-        window.location.href = "order_list.html";
+        let loginData = {
+            "username": username,
+            "hasedPassword": hashedPassword,
+        }
+        fetch(ACCOUNT_ADDRESS, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(loginData),
+        })
+            .then((value: Response) => value.json())
+            // TODO: store cookie
+            .then((data) => {
+                console.log('Log In Success:', data);
+                // window.location.href = "order_list.html";
+            })
+            .catch((error) => {
+                console.error('Log In Error:', error);
+            });
     }
 
     async function sendSignupRequest(username: string, hashedPassword: string) {
-        // TODO: fetch();
-        BACKEND_ADDRESS;
+        let signUpData = {
+            "username": username,
+            "hasedPassword": hashedPassword,
+        }
+        fetch(ACCOUNT_ADDRESS, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(signUpData),
+        })
+            .then((value: Response) => value.json())
+            // TODO
+            .then((data) => {
+                console.log('Sign Up Success:', data);
+            })
+            .catch((error) => {
+                console.error('Sign Up Error:', error);
+            });
+
     }
 
     function calcPasswordHash(password: string, salt: string): string {

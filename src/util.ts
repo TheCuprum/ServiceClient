@@ -9,6 +9,7 @@ export class ParsedToken {
     userName = "";
     expirationDate = "";
 };
+export const EMPTY_TOKEN = new ParsedToken();
 
 export function parseToken(token: string): ParsedToken {
     var retObj = new ParsedToken();
@@ -41,16 +42,17 @@ export function updateBanner(userIdBlank: HTMLDivElement,
 export function checkToken(window: Window,
     acceptCallback: CallableFunction = DEFAULT_ACCEPT,
     rejectCallback: CallableFunction = DEFAULT_REJECT) {
-    window.onload = () => {
+    window.addEventListener("load", () => {
         let to = jsCookie.get("token");
         if (to == null) {
             rejectCallback();
         } else {
-            acceptCallback();
+            // if (parsedToken.xxxxx <= Date.now() )
+            acceptCallback(to);
             // tokenObj["token"] = to;
             // tokenObj["hasToken"] = true;
         }
-    };
+    });
 }
 
 //Cookies.set('name', 'value', { expires: 7, path: '' })

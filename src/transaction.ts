@@ -1,6 +1,6 @@
-import { BACKEND_ADDRESS, TICKET_TABLE_KEYS } from "./config";
+import { BACKEND_ADDRESS, BOOK_ADDRESS, TICKET_TABLE_CUSTOM_ELEMENTS, TICKET_TABLE_KEYS } from "./config";
 import { Ticket } from "./datatypes";
-import { checkToken, PageInfo, parseToken, regPageFlip, removeAllChildren, updateBanner } from "./util";
+import { checkToken, EMPTY_TOKEN, PageInfo, ParsedToken, parseToken, regPageFlip, removeAllChildren, updateBanner, updateTable } from "./util";
 
 namespace transactionPage {
 
@@ -21,6 +21,8 @@ namespace transactionPage {
 
     const EMPTY_OBJECT = new Ticket();
 
+    var token: string = "";  // TODO
+    var tokenObj: ParsedToken = EMPTY_TOKEN;
     var pageInfo: PageInfo = new PageInfo();
     var radioElements: HTMLInputElement[] = [];
     var selectedTicket: Ticket = EMPTY_OBJECT;
@@ -39,64 +41,103 @@ namespace transactionPage {
         }
     };
 
-    function queryTicketList(page: number, table: HTMLTableElement, keys: string[], rowCallback: CallableFunction = () => { }) {
+    function queryTicketList(page: number, filter: string, table: HTMLTableElement, keys: string[], rowCallback: CallableFunction = () => { }) {
+        let postfix: string;
+        if (filter == null || filter == "" || filter == undefined)
+            postfix = `?token=${token}&page=${page}`;
+        else
+            postfix = `?token=${token}&page=${page}&filter=${filter}`;
+
         // query ordered list
-        // then update table
-        // and store all select inputs to []
-        BACKEND_ADDRESS;
-        transPageNumberInput.value = String(page);
-        pageInfo.pageNumberMax = 10; // TODO
-        radioElements = []; // monkey patch 
+        fetch(BOOK_ADDRESS + postfix, {
+            method: "GET"
+        })
+            .then((value: Response) => value.json())
+            .then((data) => {
+                console.log("Query ticket Success:", data);
+                // TODO
+                let value: object[] = [];
+                transPageNumberInput.value = String(page);
+                pageInfo.pageNumberMax = 10; // TODO
+                // query ticket list
+                // then update table
+                // and store all select inputs to []
+                radioElements = []; // monkey patch 
+                updateTable(table, keys, value, TICKET_TABLE_CUSTOM_ELEMENTS, rowCallback);
+            })
+            .catch((error) => {
+                console.error("Query ticket Error:", error);
+            });
     }
 
-    function updatePaymentMsg(paymentMsgDiv: HTMLDivElement, msg: Node) {        
+    function updatePaymentMsg(paymentMsgDiv: HTMLDivElement, msg: Node) {
         removeAllChildren(paymentMsgDiv);
         paymentMsgDiv.append(msg);
     }
 
-    function sendTicketRequest(ticketObject: Object) {
-        // TODO
+    function sendTicketRequest(ticket: Ticket) {
+        var bookInfo = {
+            "token": token,
+            "tid": ticket.tid,
+        };
+        // query ordered list
+        fetch(BOOK_ADDRESS, {
+            method: "POST"
+        })
+            .then((value: Response) => value.json())
+            .then((data) => {
+                console.log("Book Success:", data);
+                // TODO
+                window.location.reload();
+            })
+            .catch((error) => {
+                console.error("Book Error:", error);
+            });
     }
 
-    checkToken(window);
-    // TODO
-    var tokenObj = parseToken("");
-    var pageInfo: PageInfo = new PageInfo();
 
-    updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
+    checkToken(window, (to: string) => token = to);
+    window.addEventListener("load", () => {
+        if (token == "") {
+            // TODO
+            tokenObj = parseToken("");
 
-    queryTicketList(pageInfo.pageNumber, ticketTable, TICKET_TABLE_KEYS, ticketRowCallback);
+            updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
 
+            queryTicketList(pageInfo.pageNumber, "", ticketTable, TICKET_TABLE_KEYS, ticketRowCallback);
+        }
 
+        regPageFlip(
+            transPageNumberInput,
+            previousTransPageButton,
+            nextTransPageButton,
+            pageInfo,
+            (currentPage: number, nextPage: number) => {
+                if (tokenObj != EMPTY_TOKEN && currentPage != nextPage)
+                    queryTicketList(pageInfo.pageNumber, "", ticketTable, TICKET_TABLE_KEYS, ticketRowCallback);
+            });
 
-    regPageFlip(
-        transPageNumberInput,
-        previousTransPageButton,
-        nextTransPageButton,
-        pageInfo,
-        (currentPage: number, nextPage: number) => {
-            if (currentPage != nextPage)
-                queryTicketList(pageInfo.pageNumber, ticketTable, TICKET_TABLE_KEYS, ticketRowCallback);
+        chooseButton.addEventListener("click", (ev: Event) => {
+            if (tokenObj != EMPTY_TOKEN && selectedTicket != EMPTY_OBJECT) {
+                paymentMsgDiv.hidden = false;
+                confirmButton.hidden = false;
+                discardButton.hidden = false;
+
+                updatePaymentMsg(paymentMsgDiv, document.createTextNode("PLACEHOLDER"));
+            }
         });
 
-    chooseButton.addEventListener("click", (ev: Event) => {
-        if (selectedTicket != EMPTY_OBJECT) {
-        paymentMsgDiv.hidden = false;
-        confirmButton.hidden = false;
-        discardButton.hidden = false;
+        confirmButton.addEventListener("click", (ev: Event) => {
+            if (tokenObj != EMPTY_TOKEN && selectedTicket != EMPTY_OBJECT) {
+                // TODO
+            }
+        });
 
-        updatePaymentMsg(paymentMsgDiv, document.createTextNode("PLACEHOLDER"));
-        }
-    });
-    confirmButton.addEventListener("click", (ev: Event) => {
-        if (selectedTicket != EMPTY_OBJECT) {
-            // TODO
-        }
-    });
-    discardButton.addEventListener("click", (ev: Event) => {
-        paymentMsgDiv.hidden = true;
-        confirmButton.hidden = true;
-        discardButton.hidden = true;
-        selectedTicket = EMPTY_OBJECT;
+        discardButton.addEventListener("click", (ev: Event) => {
+            paymentMsgDiv.hidden = true;
+            confirmButton.hidden = true;
+            discardButton.hidden = true;
+            selectedTicket = EMPTY_OBJECT;
+        });
     });
 }

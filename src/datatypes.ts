@@ -1,11 +1,21 @@
 export class Ticket {
     tid: string;
     tname: string;
+    tdepr: string;
+    tdest: string;
     tdate: string;
 
-    constructor(id: string = "", name: string = "", validationDate: string = "") {
+    constructor(
+        id: string = "",
+        name: string = "",
+        tdepr: string = "",
+        tdest: string = "",
+        validationDate: string = ""
+    ) {
         this.tid = id;
         this.tname = name;
+        this.tdepr = tdepr;
+        this.tdest = tdest;
         this.tdate = validationDate;
     }
 }

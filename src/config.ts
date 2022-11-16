@@ -1,4 +1,8 @@
 export const BACKEND_ADDRESS = "";
+export const ACCOUNT_ADDRESS = BACKEND_ADDRESS + "/account";
+export const ORDER_ADDRESS = BACKEND_ADDRESS + "/order";
+export const BOOK_ADDRESS = BACKEND_ADDRESS + "/ticket";
+
 export const PASSWORD_SALT = "114514";
 
 // TODO
