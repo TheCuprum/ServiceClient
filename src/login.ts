@@ -1,6 +1,7 @@
 import { ACCOUNT_ADDRESS, PASSWORD_SALT } from "./config";
 import { checkToken } from "./util";
 import SHA256 from "crypto-js/sha256";
+import Cookies from "js-cookie";
 
 namespace loginPage {
     const loginHeading = document.getElementById("login-heading") as HTMLHeadingElement;
@@ -16,21 +17,30 @@ namespace loginPage {
     async function sendLoginRequest(username: string, hashedPassword: string) {
         // TODO: fetch();
         let loginData = {
-            "username": username,
-            "hasedPassword": hashedPassword,
-        }
+            "user": username,
+            "pass": hashedPassword,
+        };
+        console.log(loginData);
+
         fetch(ACCOUNT_ADDRESS, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
+            mode: "no-cors",
             body: JSON.stringify(loginData),
         })
-            .then((value: Response) => value.json())
+            .then((value: Response) => { console.log(value); return value.json(); })
             // TODO: store cookie
-            .then((data) => {
-                console.log('Log In Success:', data);
-                // window.location.href = "order_list.html";
+            .then((data: { [key: string]: any }) => {
+                console.log('Log In response:', data);
+                if (data["code"] == 0) {
+                    Cookies.set("token", data["token"], { expires: 7, path: '' });
+                    window.location.href = "order_list.html";
+                } else {
+                    console.error(data);
+                    window.alert(data);
+                }
             })
             .catch((error) => {
                 console.error('Log In Error:', error);
@@ -41,18 +51,28 @@ namespace loginPage {
         let signUpData = {
             "username": username,
             "hasedPassword": hashedPassword,
-        }
+        };
+        console.log(signUpData);
+
         fetch(ACCOUNT_ADDRESS, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
+            mode: "no-cors",
             body: JSON.stringify(signUpData),
         })
             .then((value: Response) => value.json())
             // TODO
-            .then((data) => {
-                console.log('Sign Up Success:', data);
+            .then((data: { [key: string]: any }) => {
+                console.log('Sign Up response:', data);
+                if (data["code"] == 0) {
+                    window.alert("Sign up success.");
+                    window.location.reload();
+                } else {
+                    console.error(data);
+                    window.alert(data);
+                }
             })
             .catch((error) => {
                 console.error('Sign Up Error:', error);

@@ -1,4 +1,4 @@
-export const BACKEND_ADDRESS = "";
+export const BACKEND_ADDRESS = "http://localhost:8080/test";
 export const ACCOUNT_ADDRESS = BACKEND_ADDRESS + "/account";
 export const ORDER_ADDRESS = BACKEND_ADDRESS + "/order";
 export const BOOK_ADDRESS = BACKEND_ADDRESS + "/ticket";
@@ -6,8 +6,24 @@ export const BOOK_ADDRESS = BACKEND_ADDRESS + "/ticket";
 export const PASSWORD_SALT = "114514";
 
 // TODO
-export const ORDER_TABLE_KEYS: string[] = ["check"];
-export const TICKET_TABLE_KEYS: string[] = ["radio"];
+export const ORDER_TABLE_KEYS: string[] = [
+    "check", 
+    "oid",
+    "tid",
+    "tname",
+    "odate",
+    "tdepr",
+    "tdest",
+    "tdate",
+];
+export const TICKET_TABLE_KEYS: string[] = [
+    "radio",
+    "tid",
+    "tname",
+    "tdepr",
+    "tdest",
+    "tdate",
+];
 
 export const ORDER_TABLE_CUSTOM_ELEMENTS: Map<string, CallableFunction> = new Map<string, CallableFunction>(
     [

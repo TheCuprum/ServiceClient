@@ -5,18 +5,24 @@ export var DEFAULT_ACCEPT = () => { };
 export var DEFAULT_REJECT = () => { };
 
 export class ParsedToken {
-    userId = "";
+    // userId = "";
     userName = "";
-    expirationDate = "";
+    // expirationDate = "";
 };
 export const EMPTY_TOKEN = new ParsedToken();
 
-export function parseToken(token: string): ParsedToken {
-    var retObj = new ParsedToken();
+// export function parseToken(token: string): ParsedToken {
+//     var retObj = new ParsedToken();
+//     try {
 
-    // TODO
-    return retObj;
-}
+//         let payload = jwt.decode(token, { json: true });
+//         retObj.userName = payload["user"];
+//     } catch (err: any) {
+//         console.error(err);
+//     }
+
+//     return retObj;
+// }
 
 export function removeAllChildren(element: HTMLElement, startIndex: number = 0) {
     let children = element.childNodes;
@@ -25,18 +31,20 @@ export function removeAllChildren(element: HTMLElement, startIndex: number = 0) 
     }
 }
 
-export function updateBanner(userIdBlank: HTMLDivElement,
-    userNameBlank: HTMLDivElement,
-    expirationTimeBlank: HTMLDivElement,
-    userId: string,
-    userName: string,
-    expirationTime: string) {
-    removeAllChildren(userIdBlank);
-    removeAllChildren(userNameBlank);
-    removeAllChildren(expirationTimeBlank);
-    userIdBlank.appendChild(document.createTextNode(userId));
-    userNameBlank.appendChild(document.createTextNode(userName));
-    expirationTimeBlank.appendChild(document.createTextNode(expirationTime));
+export function updateBanner(
+    // userIdBlank: HTMLDivElement,
+    tokenBlank: HTMLDivElement,
+    // expirationTimeBlank: HTMLDivElement,
+    // userId: string,
+    token: string,
+    // expirationTime: string
+) {
+    // removeAllChildren(userIdBlank);
+    removeAllChildren(tokenBlank);
+    // removeAllChildren(expirationTimeBlank);
+    // userIdBlank.appendChild(document.createTextNode(userId));
+    tokenBlank.appendChild(document.createTextNode(token));
+    // expirationTimeBlank.appendChild(document.createTextNode(expirationTime));
 }
 
 export function checkToken(window: Window,
@@ -47,15 +55,11 @@ export function checkToken(window: Window,
         if (to == null) {
             rejectCallback();
         } else {
-            // if (parsedToken.xxxxx <= Date.now() )
             acceptCallback(to);
-            // tokenObj["token"] = to;
-            // tokenObj["hasToken"] = true;
         }
     });
 }
 
-//Cookies.set('name', 'value', { expires: 7, path: '' })
 
 export class PageInfo {
     pageNumber = 1;
@@ -109,6 +113,6 @@ export function updateTable(table: HTMLTableElement, keys: string[], values: obj
             tableRow.appendChild(tableData);
         }
         table.appendChild(tableRow);
-        rowCallback(tableRow, table);
+        rowCallback(rowNum, tableRow, table);
     }
 }

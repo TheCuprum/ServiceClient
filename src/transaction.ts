@@ -1,12 +1,13 @@
-import { BACKEND_ADDRESS, BOOK_ADDRESS, TICKET_TABLE_CUSTOM_ELEMENTS, TICKET_TABLE_KEYS } from "./config";
-import { Ticket } from "./datatypes";
-import { checkToken, EMPTY_TOKEN, PageInfo, ParsedToken, parseToken, regPageFlip, removeAllChildren, updateBanner, updateTable } from "./util";
+import { BOOK_ADDRESS, TICKET_TABLE_CUSTOM_ELEMENTS, TICKET_TABLE_KEYS } from "./config";
+import { Ticket, TicketEntry, TicketEntryFlat } from "./datatypes";
+import { checkToken, PageInfo, regPageFlip, removeAllChildren, updateBanner, updateTable } from "./util";
 
 namespace transactionPage {
 
-    const userIdBlank = document.getElementById("user-id-blank") as HTMLDivElement;
-    const userNameBlank = document.getElementById("user-id-blank") as HTMLDivElement;
-    const expirationTimeBlank = document.getElementById("expiration-date-blank") as HTMLDivElement;
+    const tokenBlank = document.getElementById("token-blank") as HTMLDivElement;
+    // const userIdBlank = document.getElementById("user-id-blank") as HTMLDivElement;
+    // const userNameBlank = document.getElementById("user-id-blank") as HTMLDivElement;
+    // const expirationTimeBlank = document.getElementById("expiration-date-blank") as HTMLDivElement;
 
     const ticketTable = document.getElementById("ticket-table") as HTMLTableElement;
 
@@ -21,20 +22,21 @@ namespace transactionPage {
 
     const EMPTY_OBJECT = new Ticket();
 
-    var token: string = "";  // TODO
-    var tokenObj: ParsedToken = EMPTY_TOKEN;
+    var token: string = "";
+    // var tokenObj: ParsedToken = EMPTY_TOKEN;
     var pageInfo: PageInfo = new PageInfo();
+    var entryList: TicketEntry[] = [];
     var radioElements: HTMLInputElement[] = [];
     var selectedTicket: Ticket = EMPTY_OBJECT;
 
 
-    const ticketRowCallback = (row: HTMLTableRowElement, table: HTMLTableElement) => {
+    const ticketRowCallback = (rowNum: number, row: HTMLTableRowElement, table: HTMLTableElement) => {
         if (row != null && row.childNodes[0] instanceof HTMLInputElement) {
             let radElement = row.childNodes[0] as HTMLInputElement;
             if (radElement.type == "radio") {
                 radioElements.push(radElement);
                 radElement.addEventListener("click", (ev: Event) => {
-                    selectedTicket = new Ticket();
+                    selectedTicket = entryList[rowNum].ticket;
                     // TODO
                 });
             }
@@ -51,19 +53,28 @@ namespace transactionPage {
         // query ordered list
         fetch(BOOK_ADDRESS + postfix, {
             method: "GET"
+            // query ticket list
         })
             .then((value: Response) => value.json())
             .then((data) => {
-                console.log("Query ticket Success:", data);
-                // TODO
-                let value: object[] = [];
-                transPageNumberInput.value = String(page);
-                pageInfo.pageNumberMax = 10; // TODO
-                // query ticket list
-                // then update table
-                // and store all select inputs to []
-                radioElements = []; // monkey patch 
-                updateTable(table, keys, value, TICKET_TABLE_CUSTOM_ELEMENTS, rowCallback);
+                console.log("Query ticket response:", data);
+                if (data["code"] == 0) {
+                    transPageNumberInput.value = String(page);
+
+                    entryList = data["entries"] as TicketEntry[];
+                    let entryListFlat: TicketEntryFlat[] = [];
+                    for (let index = 0; index < entryList.length; index++)
+                        entryListFlat.push(new TicketEntryFlat(entryList[index]))
+
+                    pageInfo.pageNumberMax = entryList.length;
+                    radioElements = []; // monkey patch 
+                    // then update table
+                    updateTable(table, keys, entryListFlat, TICKET_TABLE_CUSTOM_ELEMENTS, rowCallback);
+                    // and store all radio inputs to []
+                } else {
+                    console.error(data);
+                    window.alert(data);
+                }
             })
             .catch((error) => {
                 console.error("Query ticket Error:", error);
@@ -79,6 +90,7 @@ namespace transactionPage {
         var bookInfo = {
             "token": token,
             "tid": ticket.tid,
+            "timestamp": Date.now(),
         };
         // query ordered list
         fetch(BOOK_ADDRESS, {
@@ -86,8 +98,13 @@ namespace transactionPage {
         })
             .then((value: Response) => value.json())
             .then((data) => {
-                console.log("Book Success:", data);
-                // TODO
+                console.log("Book response:", data);
+                if (data["code"] == 0) {
+                    ;
+                } else {
+                    console.error(data);
+                    window.alert(data);
+                }
                 window.location.reload();
             })
             .catch((error) => {
@@ -98,12 +115,9 @@ namespace transactionPage {
 
     checkToken(window, (to: string) => token = to);
     window.addEventListener("load", () => {
-        if (token == "") {
-            // TODO
-            tokenObj = parseToken("");
-
-            updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
-
+        if (token != "") {
+            updateBanner(tokenBlank, token);
+            // updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
             queryTicketList(pageInfo.pageNumber, "", ticketTable, TICKET_TABLE_KEYS, ticketRowCallback);
         }
 
@@ -113,12 +127,12 @@ namespace transactionPage {
             nextTransPageButton,
             pageInfo,
             (currentPage: number, nextPage: number) => {
-                if (tokenObj != EMPTY_TOKEN && currentPage != nextPage)
+                if (token != "" && currentPage != nextPage)
                     queryTicketList(pageInfo.pageNumber, "", ticketTable, TICKET_TABLE_KEYS, ticketRowCallback);
             });
 
         chooseButton.addEventListener("click", (ev: Event) => {
-            if (tokenObj != EMPTY_TOKEN && selectedTicket != EMPTY_OBJECT) {
+            if (token != "" && selectedTicket != EMPTY_OBJECT) {
                 paymentMsgDiv.hidden = false;
                 confirmButton.hidden = false;
                 discardButton.hidden = false;
@@ -128,8 +142,9 @@ namespace transactionPage {
         });
 
         confirmButton.addEventListener("click", (ev: Event) => {
-            if (tokenObj != EMPTY_TOKEN && selectedTicket != EMPTY_OBJECT) {
+            if (token != "" && selectedTicket != EMPTY_OBJECT) {
                 // TODO
+                sendTicketRequest(selectedTicket);
             }
         });
 

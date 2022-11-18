@@ -1,12 +1,13 @@
-import { BACKEND_ADDRESS, ORDER_ADDRESS, ORDER_TABLE_CUSTOM_ELEMENTS, ORDER_TABLE_KEYS } from "./config";
-import { Order } from "./datatypes";
-import { checkToken, EMPTY_TOKEN, PageInfo, ParsedToken, parseToken, regPageFlip, updateBanner, updateTable } from "./util";
+import { ORDER_ADDRESS, ORDER_TABLE_CUSTOM_ELEMENTS, ORDER_TABLE_KEYS } from "./config";
+import { Order, OrderFlat } from "./datatypes";
+import { checkToken, PageInfo, regPageFlip, updateBanner, updateTable } from "./util";
 
 namespace orderListPage {
 
-    const userIdBlank = document.getElementById("user-id-blank") as HTMLDivElement;
-    const userNameBlank = document.getElementById("user-id-blank") as HTMLDivElement;
-    const expirationTimeBlank = document.getElementById("expiration-date-blank") as HTMLDivElement;
+    const tokenBlank = document.getElementById("token-blank") as HTMLDivElement;
+    // const userIdBlank = document.getElementById("user-id-blank") as HTMLDivElement;
+    // const userNameBlank = document.getElementById("user-id-blank") as HTMLDivElement;
+    // const expirationTimeBlank = document.getElementById("expiration-date-blank") as HTMLDivElement;
 
     const orderTable = document.getElementById("order-table") as HTMLTableElement;
     const newTransactionButtonTop = document.getElementById("new-trans-button-top") as HTMLButtonElement;
@@ -17,14 +18,14 @@ namespace orderListPage {
     const nextOrderPageButton = document.getElementById("next-order-page-button") as HTMLButtonElement;
     const orderPageNumberInput = document.getElementById("order-page-number") as HTMLInputElement;
 
-    var token: string = "";  // TODO
-    var tokenObj: ParsedToken = EMPTY_TOKEN;
+    var token: string = "";
+    // var tokenObj: ParsedToken = EMPTY_TOKEN;
     var pageInfo: PageInfo = new PageInfo();
     var checkedNumber = 0;
     var checkboxElements: HTMLInputElement[] = [];
     var orderList: Order[];
 
-    const orderRowCallback = (row: HTMLTableRowElement, table: HTMLTableElement) => {
+    const orderRowCallback = (rowNum: number, row: HTMLTableRowElement, table: HTMLTableElement) => {
         if (typeof (row.childNodes[0], HTMLInputElement)) {
             let chElement = row.childNodes[0] as HTMLInputElement;
             if (chElement.type == "checkbox") {
@@ -57,16 +58,25 @@ namespace orderListPage {
             method: "GET"
         })
             .then((value: Response) => value.json())
-            .then((data) => {
-                console.log("Query order Success:", data);
-                // TODO
-                let value: object[] = [];
-                orderPageNumberInput.value = String(page);
-                pageInfo.pageNumberMax = 10; // TODO
-                // then update table
-                // and store all select inputs to []
-                checkboxElements = []; // monkey patch 
-                updateTable(table, keys, value, ORDER_TABLE_CUSTOM_ELEMENTS, rowCallback);
+            .then((data: { [key: string]: any }) => {
+                console.log("Query order response:", data);
+                if (data["code"] == 0) {
+                    // TODO
+                    orderPageNumberInput.value = String(page);
+                    orderList = data["orders"];
+                    let orderListFlat: OrderFlat[] = [];
+                    for (let index = 0; index < orderList.length; index++)
+                    orderListFlat.push(new OrderFlat(orderList[index]));
+                    
+                    pageInfo.pageNumberMax = orderList.length;
+                    checkboxElements = []; // monkey patch 
+                    // then update table
+                    // and store all select inputs to []
+                    updateTable(table, keys, orderListFlat, ORDER_TABLE_CUSTOM_ELEMENTS, rowCallback);
+                } else {
+                    console.error(data);
+                    window.alert(data);
+                }
             })
             .catch((error) => {
                 console.error("Query order Error:", error);
@@ -77,16 +87,22 @@ namespace orderListPage {
         var deleteInfo = {
             "token": token,
             "oid": order.oid,
-            "tid": order.ticket.tid,
+            // "tid": order.ticket.tid,
         };
         // query ordered list
         fetch(ORDER_ADDRESS, {
-            method: "DELETE"
+            method: "PUT"
         })
             .then((value: Response) => value.json())
-            .then((data) => {
-                console.log("Delete Success:", data);
-                // TODO
+            .then((data: { [key: string]: any }) => {
+                console.log("Delete response:", data);
+                if (data["code"] == 0) {
+                    // TODO
+                    ;
+                } else {
+                    console.error(data);
+                    window.alert(data);
+                }
                 window.location.reload();
             })
             .catch((error) => {
@@ -96,12 +112,9 @@ namespace orderListPage {
 
     checkToken(window, (to: string) => token = to);
     window.addEventListener("load", () => {
-        if (token == "") {
-            // TODO
-            tokenObj = parseToken("");
-
-            updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
-
+        if (token != "") {
+            updateBanner(tokenBlank, token);
+            // updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
             queryOrderedList(pageInfo.pageNumber, "", orderTable, ORDER_TABLE_KEYS, orderRowCallback);
             // query ordered list
             // then update table
@@ -109,13 +122,13 @@ namespace orderListPage {
         }
     });
 
-    // TODO: add listener
+    // add listener
     newTransactionButtonTop.addEventListener("click", (ev: Event) => {
         window.location.href = "transaction.html";
     });
 
     deleteButton.addEventListener("click", (ev: Event) => {
-        if (tokenObj == EMPTY_TOKEN) return;
+        if (token != "") return;
         for (let index = 0; index < checkboxElements.length; index++) {
             if (checkboxElements[index].checked) {
                 // TODO
@@ -130,7 +143,7 @@ namespace orderListPage {
         nextOrderPageButton,
         pageInfo,
         (currentPage: number, nextPage: number) => {
-            if (tokenObj != EMPTY_TOKEN && currentPage != nextPage)
+            if (token != "" && currentPage != nextPage)
                 queryOrderedList(nextPage, " ", orderTable, ORDER_TABLE_KEYS, orderRowCallback);
         });
 }
