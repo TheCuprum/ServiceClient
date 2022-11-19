@@ -1,8 +1,9 @@
 import jsCookie from "js-cookie";
+import { LOGIN_PAGE, ORDER_ADDRESS, ORDER_TABLE_CUSTOM_ELEMENTS, ORDER_TABLE_KEYS } from "./config";
 
 export var DEFAULT_ACCEPT = () => { };
-// export var DEFAULT_REJECT = () => { window.location.href = "login.html" };
-export var DEFAULT_REJECT = () => { };
+export var DEFAULT_REJECT = () => { window.location.href = LOGIN_PAGE };
+// export var DEFAULT_REJECT = () => { };
 
 export class ParsedToken {
     // userId = "";
@@ -60,6 +61,11 @@ export function checkToken(window: Window,
     });
 }
 
+export function resetToken(){
+    jsCookie.remove("token");
+    window.location.href = LOGIN_PAGE;
+}
+
 
 export class PageInfo {
     pageNumber = 1;
@@ -94,7 +100,7 @@ export function regPageFlip(pageInput: HTMLInputElement, previousButton: HTMLBut
 // queryTicketList(pageInfo.pageNumber, ticketTable, TICKET_TABLE_KEYS, ticketRowCallback)
 export function updateTable(table: HTMLTableElement, keys: string[], values: object[], customElements: Map<string, CallableFunction>,
     rowCallback: CallableFunction = (tr: HTMLTableRowElement, t: HTMLTableElement) => { }) {
-    removeAllChildren(table, 1);
+    removeAllChildren(table, 2);
     for (let rowNum = 1; rowNum <= values.length; rowNum++) {
         let tableRow = document.createElement("tr");
 
@@ -102,9 +108,9 @@ export function updateTable(table: HTMLTableElement, keys: string[], values: obj
         for (let index = 0; index < keys.length; index++) {
             let tableData = document.createElement("td");
             let cellValue = rowMap.get(keys[index]);
-            if (cellValue == undefined) {
+            if (typeof cellValue == "undefined") {
                 let generator = customElements.get(keys[index]);
-                if (generator != undefined)
+                if (typeof generator != "undefined")
                     tableData.append(generator(rowNum, index));
             } else {
                 tableData.appendChild(

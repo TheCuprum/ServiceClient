@@ -2,6 +2,10 @@
     display: inline-block;
 }
 
+.div-warp-break {
+    word-break: break-all;
+}
+
 .element-inline {
     display: inline-block;
 }

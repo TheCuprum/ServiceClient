@@ -1,6 +1,6 @@
-import { ORDER_ADDRESS, ORDER_TABLE_CUSTOM_ELEMENTS, ORDER_TABLE_KEYS } from "./config";
+import { LOGIN_PAGE, ORDER_ADDRESS, ORDER_TABLE_CUSTOM_ELEMENTS, ORDER_TABLE_KEYS, TICKET_PAGE } from "./config";
 import { Order, OrderFlat } from "./datatypes";
-import { checkToken, PageInfo, regPageFlip, updateBanner, updateTable } from "./util";
+import { checkToken, PageInfo, regPageFlip, resetToken, updateBanner, updateTable } from "./util";
 
 namespace orderListPage {
 
@@ -13,6 +13,7 @@ namespace orderListPage {
     const newTransactionButtonTop = document.getElementById("new-trans-button-top") as HTMLButtonElement;
     // const newTransactionButtonDown = null;
     const deleteButton = document.getElementById("del-button") as HTMLButtonElement;
+    const selectAll = document.getElementById("select-all") as HTMLInputElement;
 
     const previousOrderPageButton = document.getElementById("previous-order-page-button") as HTMLButtonElement;
     const nextOrderPageButton = document.getElementById("next-order-page-button") as HTMLButtonElement;
@@ -26,21 +27,27 @@ namespace orderListPage {
     var orderList: Order[];
 
     const orderRowCallback = (rowNum: number, row: HTMLTableRowElement, table: HTMLTableElement) => {
-        if (typeof (row.childNodes[0], HTMLInputElement)) {
-            let chElement = row.childNodes[0] as HTMLInputElement;
+        if (typeof (row.childNodes[0].childNodes[0], HTMLInputElement)) {
+            let chElement = row.childNodes[0].childNodes[0] as HTMLInputElement;
             if (chElement.type == "checkbox") {
                 checkboxElements.push(chElement);
-                chElement.addEventListener("click", (ev: Event) => {
+                chElement.addEventListener("change", (ev: Event) => {
                     var e = ev.target as HTMLInputElement;
                     if (e.checked)
                         checkedNumber++;
                     else
                         checkedNumber--;
 
-                    if (checkedNumber > 0)
+                    if (checkedNumber > 0) {
                         deleteButton.hidden = false;
-                    else
-                        deleteButton.hidden = true
+                        if (checkedNumber >= checkboxElements.length)
+                            selectAll.checked = true;
+                        else
+                            selectAll.checked = false;
+                    }
+                    else {
+                        deleteButton.hidden = true;
+                    }
                 });
             }
         }
@@ -52,6 +59,8 @@ namespace orderListPage {
             postfix = `?token=${token}&page=${page}`;
         else
             postfix = `?token=${token}&page=${page}&filter=${filter}`;
+
+        // console.log("Query Order:" + ORDER_ADDRESS + postfix);
 
         // query ordered list
         fetch(ORDER_ADDRESS + postfix, {
@@ -66,16 +75,18 @@ namespace orderListPage {
                     orderList = data["orders"];
                     let orderListFlat: OrderFlat[] = [];
                     for (let index = 0; index < orderList.length; index++)
-                    orderListFlat.push(new OrderFlat(orderList[index]));
-                    
+                        orderListFlat.push(new OrderFlat(orderList[index]));
+
                     pageInfo.pageNumberMax = orderList.length;
                     checkboxElements = []; // monkey patch 
+                    checkedNumber = 0;
                     // then update table
                     // and store all select inputs to []
                     updateTable(table, keys, orderListFlat, ORDER_TABLE_CUSTOM_ELEMENTS, rowCallback);
                 } else {
                     console.error(data);
-                    window.alert(data);
+                    window.alert(JSON.stringify(data));
+                    if (data["code"] == "-300") resetToken();
                 }
             })
             .catch((error) => {
@@ -91,19 +102,29 @@ namespace orderListPage {
         };
         // query ordered list
         fetch(ORDER_ADDRESS, {
-            method: "PUT"
+            method: "PUT",
+            headers: {
+                // "Content-Type": "application/json",
+                "Content-Type": "text/plain",
+            },
+            // mode: "no-cors",
+            body: JSON.stringify(deleteInfo),
         })
             .then((value: Response) => value.json())
             .then((data: { [key: string]: any }) => {
                 console.log("Delete response:", data);
                 if (data["code"] == 0) {
                     // TODO
+                    window.location.reload();
                     ;
                 } else {
                     console.error(data);
-                    window.alert(data);
+                    window.alert(JSON.stringify(data));
+                    if (data["code"] == "-300")
+                        resetToken();
+                    else
+                        window.location.reload();
                 }
-                window.location.reload();
             })
             .catch((error) => {
                 console.error("Delete Error:", error);
@@ -112,23 +133,22 @@ namespace orderListPage {
 
     checkToken(window, (to: string) => token = to);
     window.addEventListener("load", () => {
-        if (token != "") {
-            updateBanner(tokenBlank, token);
-            // updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
-            queryOrderedList(pageInfo.pageNumber, "", orderTable, ORDER_TABLE_KEYS, orderRowCallback);
-            // query ordered list
-            // then update table
-            // and store all select inputs to []
-        }
+        if (token == "") return;
+        updateBanner(tokenBlank, token);
+        // updateBanner(userIdBlank, userNameBlank, expirationTimeBlank, tokenObj.userId, tokenObj.userName, tokenObj.expirationDate);
+        queryOrderedList(pageInfo.pageNumber, "", orderTable, ORDER_TABLE_KEYS, orderRowCallback);
+        // query ordered list
+        // then update table
+        // and store all select inputs to []
     });
 
     // add listener
     newTransactionButtonTop.addEventListener("click", (ev: Event) => {
-        window.location.href = "transaction.html";
+        window.location.href = TICKET_PAGE;
     });
 
     deleteButton.addEventListener("click", (ev: Event) => {
-        if (token != "") return;
+        if (token == "") return;
         for (let index = 0; index < checkboxElements.length; index++) {
             if (checkboxElements[index].checked) {
                 // TODO
@@ -136,6 +156,18 @@ namespace orderListPage {
             }
         }
     });
+
+    selectAll.addEventListener("change", (ev: Event) => {
+        let tar = ev.target as HTMLInputElement;
+        let state = tar.checked; // lock state
+        for (let index = 0; index < checkboxElements.length; index++) {
+            if (checkboxElements[index].checked != state) {
+                checkboxElements[index].click();
+                // checkboxElements[index].checked = tar.checked;
+            }
+        }
+        tar.checked = state;
+    })
 
     regPageFlip(
         orderPageNumberInput,

@@ -3,11 +3,15 @@ export const ACCOUNT_ADDRESS = BACKEND_ADDRESS + "/account";
 export const ORDER_ADDRESS = BACKEND_ADDRESS + "/order";
 export const BOOK_ADDRESS = BACKEND_ADDRESS + "/ticket";
 
+export const LOGIN_PAGE = "login.html";
+export const ORDER_PAGE = "order_list.html";
+export const TICKET_PAGE = "transaction.html";
+
 export const PASSWORD_SALT = "114514";
 
 // TODO
 export const ORDER_TABLE_KEYS: string[] = [
-    "check", 
+    "check",
     "oid",
     "tid",
     "tname",
@@ -23,15 +27,16 @@ export const TICKET_TABLE_KEYS: string[] = [
     "tdepr",
     "tdest",
     "tdate",
+    "price",
 ];
 
 export const ORDER_TABLE_CUSTOM_ELEMENTS: Map<string, CallableFunction> = new Map<string, CallableFunction>(
     [
-        ["check", (row: number, col: number) => { let e = document.createElement("input"); e.type = "checkbox"; e.id = `order-checkbox_${row}`; }],
+        ["check", (row: number, col: number) => { let e = document.createElement("input"); e.type = "checkbox"; e.id = `order-checkbox_${row}`; return e; }],
     ]
 );
 export const TICKET_TABLE_CUSTOM_ELEMENTS: Map<string, CallableFunction> = new Map<string, CallableFunction>(
     [
-        ["radio", (row: number, col: number) => { let e = document.createElement("input"); e.type = "radio"; e.name = "ticket"; e.id = `ticket-radio_${row}`; }],
+        ["radio", (row: number, col: number) => { let e = document.createElement("input"); e.type = "radio"; e.name = "ticket"; e.id = `ticket-radio_${row}`; return e; }],
     ]
 );

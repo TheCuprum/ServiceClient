@@ -1,4 +1,4 @@
-import { ACCOUNT_ADDRESS, PASSWORD_SALT } from "./config";
+import { ACCOUNT_ADDRESS, ORDER_PAGE, PASSWORD_SALT } from "./config";
 import { checkToken } from "./util";
 import SHA256 from "crypto-js/sha256";
 import Cookies from "js-cookie";
@@ -20,26 +20,33 @@ namespace loginPage {
             "user": username,
             "pass": hashedPassword,
         };
+        loginData = {
+            "user": "red",
+            "pass": "10000",
+        };
         console.log(loginData);
 
         fetch(ACCOUNT_ADDRESS, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                // "Content-Type": "application/json",
+                "Content-Type": "text/plain",
             },
-            mode: "no-cors",
+            // mode: "no-cors",
             body: JSON.stringify(loginData),
+            // })
         })
-            .then((value: Response) => { console.log(value); return value.json(); })
+            // .then((value: Response) => { console.log(value); return value.json(); })
+            .then((value: Response) => value.json())
             // TODO: store cookie
             .then((data: { [key: string]: any }) => {
-                console.log('Log In response:', data);
+                // console.log('Log In response:', data);
                 if (data["code"] == 0) {
                     Cookies.set("token", data["token"], { expires: 7, path: '' });
-                    window.location.href = "order_list.html";
+                    window.location.href = ORDER_PAGE;
                 } else {
                     console.error(data);
-                    window.alert(data);
+                    window.alert(JSON.stringify(data));
                 }
             })
             .catch((error) => {
@@ -49,29 +56,30 @@ namespace loginPage {
 
     async function sendSignupRequest(username: string, hashedPassword: string) {
         let signUpData = {
-            "username": username,
-            "hasedPassword": hashedPassword,
+            "user": username,
+            "pass": hashedPassword,
         };
-        console.log(signUpData);
+        // console.log(signUpData);
 
         fetch(ACCOUNT_ADDRESS, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
+                // "Content-Type": "application/json",
+                "Content-Type": "text/plain",
             },
-            mode: "no-cors",
+            // mode: "no-cors",
             body: JSON.stringify(signUpData),
         })
             .then((value: Response) => value.json())
             // TODO
             .then((data: { [key: string]: any }) => {
-                console.log('Sign Up response:', data);
+                // console.log('Sign Up response:', data);
                 if (data["code"] == 0) {
                     window.alert("Sign up success.");
                     window.location.reload();
                 } else {
                     console.error(data);
-                    window.alert(data);
+                    window.alert(JSON.stringify(data));
                 }
             })
             .catch((error) => {
@@ -84,7 +92,7 @@ namespace loginPage {
         return SHA256(password + salt).toString();
     }
 
-    checkToken(window, () => { window.location.href = "order_list.html" }, () => { });
+    checkToken(window, () => { window.location.href = ORDER_PAGE }, () => { });
 
     loginButton.addEventListener("click", () => {
         if (!signUpHeading.hidden || !signUpTableRow.hidden) {

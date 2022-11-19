@@ -3,7 +3,7 @@ h1 {
     text-align: center;
 }
 
-#order-table {
+#ticket-table {
     text-align: center;
 }
 
@@ -12,4 +12,9 @@ h1 {
     justify-content: space-between;
     padding-left: 20px;
     padding-right: 20px;
+}
+
+#action-button-container {
+    justify-content: flex-start;
+    
 }

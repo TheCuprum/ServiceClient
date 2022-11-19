@@ -12,7 +12,7 @@
 
 <body>
     <div class="banner-top" , id="user-banner">
-        <div class="div-inline">Your Token: <div id="token-blank"></div>
+        <div class="div-inline">Your Token: <div class="div-warp-break" id="token-blank"></div>
         </div>
         <!-- <div class="div-inline">User ID: <div id="user-id-blank"></div>
         </div> -->
@@ -22,16 +22,22 @@
         </div> -->
     </div>
     <div class="main-info-container" id="transaction-container">
+        <div class="row-flex-container" id="action-button-container">
+            <button class="button-medium" id="back-button">◁ Back</button>
+        </div>
         <h1>Avaliable Tickets</h1>
         <table class="info-table" id="ticket-table">
-            <tr>
-                <th></th>
-                <th>Ticket ID</th>
-                <th>Ticket Name</th>
-                <th>Place of Departure</th>
-                <th>Destination</th>
-                <th>Validation Time</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Ticket ID</th>
+                    <th>Ticket Name</th>
+                    <th>Place of Departure</th>
+                    <th>Destination</th>
+                    <th>Validation Time</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
             <tr>
                 <td><input type="radio" name="ticket"></td>
                 <td>adasdadd</td>
@@ -39,6 +45,7 @@
                 <td>AAAAA</td>
                 <td>ASDASASSD</td>
                 <td>11:45</td>
+                <td>￥ 11.45</td>
             </tr>
         </table>
         <div class="page-flip" id="trans-page-flip">
@@ -51,7 +58,7 @@
         <div class="row-flex-container" id="payment-div">
             <div class="column-flex-container" id="action-button-container">
                 <button class="button-medium" id="choose-button">Choose Ticket</button>
-                <button class="button-medium" id="confirm-button" hidden>Buy Ticket</button>
+                <button class="button-medium" id="confirm-button" hidden><b>Buy Ticket</b></button>
                 <button class="button-medium" id="discard-button" hidden>Discard</button>
             </div>
             <div id="payment-msg-div" hidden>

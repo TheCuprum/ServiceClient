@@ -1,6 +1,6 @@
-import { BOOK_ADDRESS, TICKET_TABLE_CUSTOM_ELEMENTS, TICKET_TABLE_KEYS } from "./config";
+import { BOOK_ADDRESS, ORDER_ADDRESS, ORDER_PAGE, TICKET_TABLE_CUSTOM_ELEMENTS, TICKET_TABLE_KEYS } from "./config";
 import { Ticket, TicketEntry, TicketEntryFlat } from "./datatypes";
-import { checkToken, PageInfo, regPageFlip, removeAllChildren, updateBanner, updateTable } from "./util";
+import { checkToken, PageInfo, regPageFlip, removeAllChildren, resetToken, updateBanner, updateTable } from "./util";
 
 namespace transactionPage {
 
@@ -9,6 +9,7 @@ namespace transactionPage {
     // const userNameBlank = document.getElementById("user-id-blank") as HTMLDivElement;
     // const expirationTimeBlank = document.getElementById("expiration-date-blank") as HTMLDivElement;
 
+    const backButton = document.getElementById("back-button") as HTMLButtonElement;
     const ticketTable = document.getElementById("ticket-table") as HTMLTableElement;
 
     const previousTransPageButton = document.getElementById("previous-trans-page-button") as HTMLButtonElement;
@@ -31,12 +32,16 @@ namespace transactionPage {
 
 
     const ticketRowCallback = (rowNum: number, row: HTMLTableRowElement, table: HTMLTableElement) => {
-        if (row != null && row.childNodes[0] instanceof HTMLInputElement) {
-            let radElement = row.childNodes[0] as HTMLInputElement;
+        if (row != null && row.childNodes[0].childNodes[0] instanceof HTMLInputElement) {
+            let radElement = row.childNodes[0].childNodes[0] as HTMLInputElement;
             if (radElement.type == "radio") {
+                console.log(1);
+
                 radioElements.push(radElement);
-                radElement.addEventListener("click", (ev: Event) => {
-                    selectedTicket = entryList[rowNum].ticket;
+                radElement.addEventListener("change", (ev: Event) => {
+                    // radElement.addEventListener("click", (ev: Event) => {
+                        selectedTicket = entryList[rowNum - 1].ticket;
+                        console.log(2, selectedTicket);
                     // TODO
                 });
             }
@@ -73,7 +78,8 @@ namespace transactionPage {
                     // and store all radio inputs to []
                 } else {
                     console.error(data);
-                    window.alert(data);
+                    window.alert(JSON.stringify(data));
+                    if (data["code"] == "-300") resetToken();
                 }
             })
             .catch((error) => {
@@ -93,19 +99,29 @@ namespace transactionPage {
             "timestamp": Date.now(),
         };
         // query ordered list
-        fetch(BOOK_ADDRESS, {
-            method: "POST"
+        fetch(ORDER_ADDRESS, {
+            method: "POST",
+            headers: {
+                // "Content-Type": "application/json",
+                "Content-Type": "text/plain",
+            },
+            // mode: "no-cors",
+            body: JSON.stringify(bookInfo),
         })
             .then((value: Response) => value.json())
             .then((data) => {
                 console.log("Book response:", data);
                 if (data["code"] == 0) {
+                    window.location.reload();
                     ;
                 } else {
                     console.error(data);
-                    window.alert(data);
+                    window.alert(JSON.stringify(data));
+                    if (data["code"] == "-300")
+                        resetToken();
+                    else
+                        window.location.reload();
                 }
-                window.location.reload();
             })
             .catch((error) => {
                 console.error("Book Error:", error);
@@ -132,6 +148,8 @@ namespace transactionPage {
             });
 
         chooseButton.addEventListener("click", (ev: Event) => {
+            console.log(selectedTicket);
+
             if (token != "" && selectedTicket != EMPTY_OBJECT) {
                 paymentMsgDiv.hidden = false;
                 confirmButton.hidden = false;
@@ -152,7 +170,10 @@ namespace transactionPage {
             paymentMsgDiv.hidden = true;
             confirmButton.hidden = true;
             discardButton.hidden = true;
-            selectedTicket = EMPTY_OBJECT;
+            // selectedTicket = EMPTY_OBJECT;
+        });
+        backButton.addEventListener("click", () => {
+            window.location.href = ORDER_PAGE;
         });
     });
 }

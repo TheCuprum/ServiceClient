@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <div class="banner-top", id="user-banner">
-        <div class="div-inline">Your Token: <div id="token-blank"></div>
+    <div class="banner-top" , id="user-banner">
+        <div class="div-inline">Your Token: <div class="div-warp-break" id="token-blank"></div>
         </div>
         <!-- <div class="div-inline">User ID: <div id="user-id-blank"></div>
         </div> -->
@@ -24,20 +24,22 @@
     <div class="main-info-container" id="order-container">
         <h1>Ordered Tickets</h1>
         <div class="row-flex-container" id="action-button-container">
-            <button class="button-medium" id="new-trans-button-top">+ New Transaction</button>
             <button class="button-medium" id="del-button" hidden>- Delete Selected</button>
+            <button class="button-medium" id="new-trans-button-top">+ New Transaction</button>
         </div>
         <table class="info-table" id="order-table">
-            <tr>
-                <th><input type="checkbox"></th>
-                <th>Order ID</th>
-                <th>Ticket ID</th>
-                <th>Ticket Name</th>
-                <th>Order Time</th>
-                <th>Place of Departure</th>
-                <th>Destination</th>
-                <th>Validation Time</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th><input type="checkbox", id="select-all"></th>
+                    <th>Order ID</th>
+                    <th>Ticket ID</th>
+                    <th>Ticket Name</th>
+                    <th>Order Time</th>
+                    <th>Place of Departure</th>
+                    <th>Destination</th>
+                    <th>Validation Time</th>
+                </tr>
+            </thead>
             <tr>
                 <td><input type="checkbox"></td>
                 <td>31a35</td>
