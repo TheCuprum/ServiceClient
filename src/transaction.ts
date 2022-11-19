@@ -35,17 +35,21 @@ namespace transactionPage {
         if (row != null && row.childNodes[0].childNodes[0] instanceof HTMLInputElement) {
             let radElement = row.childNodes[0].childNodes[0] as HTMLInputElement;
             if (radElement.type == "radio") {
-                console.log(1);
-
                 radioElements.push(radElement);
                 radElement.addEventListener("change", (ev: Event) => {
                     // radElement.addEventListener("click", (ev: Event) => {
                         selectedTicket = entryList[rowNum - 1].ticket;
                         console.log(2, selectedTicket);
-                    // TODO
-                });
+                        // TODO
+                    });
+                }
             }
+        if (row != null && row.childNodes[6].childNodes[0] instanceof Text) {
+            let txtNode = row.childNodes[6].childNodes[0] as Text;
+            if (txtNode.textContent != null)
+                txtNode.data = "￥ " + txtNode.data;
         }
+
     };
 
     function queryTicketList(page: number, filter: string, table: HTMLTableElement, keys: string[], rowCallback: CallableFunction = () => { }) {

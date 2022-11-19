@@ -112,6 +112,8 @@ export function updateTable(table: HTMLTableElement, keys: string[], values: obj
                 let generator = customElements.get(keys[index]);
                 if (typeof generator != "undefined")
                     tableData.append(generator(rowNum, index));
+                else
+                tableData.append(cellValue);
             } else {
                 tableData.appendChild(
                     document.createTextNode(cellValue));
