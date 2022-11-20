@@ -1,9 +1,9 @@
-import { BOOK_ADDRESS, ORDER_ADDRESS, ORDER_PAGE, TICKET_TABLE_CUSTOM_ELEMENTS, TICKET_TABLE_KEYS } from "./config";
+import { BOOK_ADDRESS, ORDER_ADDRESS, ORDER_PAGE, PAYMENT_PLACEHOLDER_LINK, TICKET_TABLE_CUSTOM_ELEMENTS, TICKET_TABLE_KEYS } from "./config";
 import { Ticket, TicketEntry, TicketEntryFlat } from "./datatypes";
-import { checkToken, PageInfo, regPageFlip, removeAllChildren, resetToken, updateBanner, updateTable } from "./util";
+import { checkToken, getBackendAddress, PageInfo, regPageFlip, removeAllChildren, resetToken, updateBanner, updateTable } from "./util";
+import QRCode from "qrcode";
 
 namespace transactionPage {
-
     const tokenBlank = document.getElementById("token-blank") as HTMLDivElement;
     // const userIdBlank = document.getElementById("user-id-blank") as HTMLDivElement;
     // const userNameBlank = document.getElementById("user-id-blank") as HTMLDivElement;
@@ -23,6 +23,7 @@ namespace transactionPage {
 
     const EMPTY_OBJECT = new Ticket();
 
+    var backend = getBackendAddress();
     var token: string = "";
     // var tokenObj: ParsedToken = EMPTY_TOKEN;
     var pageInfo: PageInfo = new PageInfo();
@@ -38,16 +39,16 @@ namespace transactionPage {
                 radioElements.push(radElement);
                 radElement.addEventListener("change", (ev: Event) => {
                     // radElement.addEventListener("click", (ev: Event) => {
-                        selectedTicket = entryList[rowNum - 1].ticket;
-                        console.log(2, selectedTicket);
-                        // TODO
-                    });
-                }
+                    selectedTicket = entryList[rowNum - 1].ticket;
+                    console.log(2, selectedTicket);
+                    // TODO
+                });
             }
+        }
         if (row != null && row.childNodes[6].childNodes[0] instanceof Text) {
             let txtNode = row.childNodes[6].childNodes[0] as Text;
             if (txtNode.textContent != null)
-                txtNode.data = "￥ " + txtNode.data;
+                txtNode.data = "￥" + txtNode.data;
         }
 
     };
@@ -60,7 +61,7 @@ namespace transactionPage {
             postfix = `?token=${token}&page=${page}&filter=${filter}`;
 
         // query ordered list
-        fetch(BOOK_ADDRESS + postfix, {
+        fetch(BOOK_ADDRESS(backend) + postfix, {
             method: "GET"
             // query ticket list
         })
@@ -91,9 +92,11 @@ namespace transactionPage {
             });
     }
 
-    function updatePaymentMsg(paymentMsgDiv: HTMLDivElement, msg: Node) {
+    function updatePaymentMsg(paymentMsgDiv: HTMLDivElement, msg: Node[]) {
         removeAllChildren(paymentMsgDiv);
-        paymentMsgDiv.append(msg);
+        for (let index = 0; index < msg.length; index++) {
+            paymentMsgDiv.append(msg[index]);
+        }
     }
 
     function sendTicketRequest(ticket: Ticket) {
@@ -103,7 +106,7 @@ namespace transactionPage {
             "timestamp": Date.now(),
         };
         // query ordered list
-        fetch(ORDER_ADDRESS, {
+        fetch(ORDER_ADDRESS(backend), {
             method: "POST",
             headers: {
                 // "Content-Type": "application/json",
@@ -132,7 +135,6 @@ namespace transactionPage {
             });
     }
 
-
     checkToken(window, (to: string) => token = to);
     window.addEventListener("load", () => {
         if (token != "") {
@@ -152,15 +154,23 @@ namespace transactionPage {
             });
 
         chooseButton.addEventListener("click", (ev: Event) => {
-            console.log(selectedTicket);
-
-            if (token != "" && selectedTicket != EMPTY_OBJECT) {
+            // if (token != "" && selectedTicket != EMPTY_OBJECT) {
                 paymentMsgDiv.hidden = false;
                 confirmButton.hidden = false;
                 discardButton.hidden = false;
 
-                updatePaymentMsg(paymentMsgDiv, document.createTextNode("PLACEHOLDER"));
-            }
+                let paymentHint = document.createElement("div");
+                paymentHint.id = "payment-hint";
+                paymentHint.append("Scan the QR code to pay:");
+                let canvas = document.createElement("canvas");
+                QRCode.toCanvas(canvas, PAYMENT_PLACEHOLDER_LINK, {
+                    color: {
+                        light: "#ffffff00",
+                    },
+                });
+                updatePaymentMsg(paymentMsgDiv, [paymentHint, canvas]);
+                // updatePaymentMsg(paymentMsgDiv, document.createTextNode("PLACEHOLDER"));
+            // }
         });
 
         confirmButton.addEventListener("click", (ev: Event) => {

@@ -7,6 +7,10 @@ h1 {
     text-align: center;
 }
 
+#payment-hint {
+    margin-top: 0.8rem;
+}
+
 #payment-div {
     flex-direction: row-reverse;
     justify-content: space-between;
@@ -16,5 +20,5 @@ h1 {
 
 #action-button-container {
     justify-content: flex-start;
-    
+    margin-top: 3px;
 }

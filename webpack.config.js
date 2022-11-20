@@ -25,7 +25,9 @@ const config = {
     },
     devServer: {
         open: true,
-        host: 'localhost',
+        // host: 'localhost',
+        host: '0.0.0.0',
+        // allowedHosts: 'all',
         port: 8000
     },
     plugins: [

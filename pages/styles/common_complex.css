@@ -35,7 +35,12 @@
 
 .info-table tr {
     border-bottom: 1px solid;
-} 
+}
+
+.info-table td, th {
+    border-left: 1px dotted lightgray;
+    border-right: 1px dotted lightgray;
+}
 
 /* .info-table tr:hover {
     background-color: gray;

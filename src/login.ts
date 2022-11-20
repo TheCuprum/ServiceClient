@@ -1,5 +1,5 @@
 import { ACCOUNT_ADDRESS, ORDER_PAGE, PASSWORD_SALT } from "./config";
-import { checkToken } from "./util";
+import { checkToken, getBackendAddress } from "./util";
 import SHA256 from "crypto-js/sha256";
 import Cookies from "js-cookie";
 
@@ -14,19 +14,18 @@ namespace loginPage {
     const loginButton = document.getElementById("login-button") as HTMLButtonElement;
     const signUpButton = document.getElementById("sign-up-button") as HTMLButtonElement;
 
+    var backend = getBackendAddress();
+
     async function sendLoginRequest(username: string, hashedPassword: string) {
         // TODO: fetch();
         let loginData = {
             "user": username,
             "pass": hashedPassword,
         };
-        loginData = {
-            "user": "red",
-            "pass": "10000",
-        };
+        // loginData = { "user": "red", "pass": "10000" };
         console.log(loginData);
 
-        fetch(ACCOUNT_ADDRESS, {
+        fetch(ACCOUNT_ADDRESS(backend), {
             method: "POST",
             headers: {
                 // "Content-Type": "application/json",
@@ -61,7 +60,7 @@ namespace loginPage {
         };
         // console.log(signUpData);
 
-        fetch(ACCOUNT_ADDRESS, {
+        fetch(ACCOUNT_ADDRESS(backend), {
             method: "PUT",
             headers: {
                 // "Content-Type": "application/json",
@@ -121,7 +120,16 @@ namespace loginPage {
             if (userName != "" && password != "" && password == confirmPassword) {
                 let hashedPassword = calcPasswordHash(password, PASSWORD_SALT);
                 sendSignupRequest(userName, hashedPassword);
+            } else if (userName != "" && password != "" && password != confirmPassword) {
+                window.alert("Password not match.");
             }
         }
+    });
+
+    passwordInput.addEventListener("keyup", (ev: KeyboardEvent) => {
+        if (ev.key == "Enter")
+            if (signUpHeading.hidden && signUpTableRow.hidden) {
+                loginButton.click();
+            }
     });
 }

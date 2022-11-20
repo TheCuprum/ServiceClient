@@ -1,9 +1,18 @@
 import jsCookie from "js-cookie";
-import { LOGIN_PAGE, ORDER_ADDRESS, ORDER_TABLE_CUSTOM_ELEMENTS, ORDER_TABLE_KEYS } from "./config";
+import { BACKEND_ADDRESS, LOGIN_PAGE, ORDER_ADDRESS, ORDER_TABLE_CUSTOM_ELEMENTS, ORDER_TABLE_KEYS } from "./config";
 
 export var DEFAULT_ACCEPT = () => { };
 export var DEFAULT_REJECT = () => { window.location.href = LOGIN_PAGE };
 // export var DEFAULT_REJECT = () => { };
+
+export function getBackendAddress(): string {
+    let addr = jsCookie.get("backend");
+    if (addr == null) {
+        return BACKEND_ADDRESS;
+    } else {
+        return addr;
+    }
+}
 
 export class ParsedToken {
     // userId = "";
@@ -61,7 +70,7 @@ export function checkToken(window: Window,
     });
 }
 
-export function resetToken(){
+export function resetToken() {
     jsCookie.remove("token");
     window.location.href = LOGIN_PAGE;
 }
@@ -113,7 +122,7 @@ export function updateTable(table: HTMLTableElement, keys: string[], values: obj
                 if (typeof generator != "undefined")
                     tableData.append(generator(rowNum, index));
                 else
-                tableData.append(cellValue);
+                    tableData.append(cellValue);
             } else {
                 tableData.appendChild(
                     document.createTextNode(cellValue));

@@ -2,17 +2,6 @@
     height: 80vh;
 }
 
-.login-box {
-    width: 100%;
-    max-width: 976px;
-    margin: auto;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-}
 
 #login-input {
     text-align: right;

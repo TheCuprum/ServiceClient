@@ -1,6 +1,6 @@
 import { LOGIN_PAGE, ORDER_ADDRESS, ORDER_TABLE_CUSTOM_ELEMENTS, ORDER_TABLE_KEYS, TICKET_PAGE } from "./config";
 import { Order, OrderFlat } from "./datatypes";
-import { checkToken, PageInfo, regPageFlip, resetToken, updateBanner, updateTable } from "./util";
+import { checkToken, getBackendAddress, PageInfo, regPageFlip, resetToken, updateBanner, updateTable } from "./util";
 
 namespace orderListPage {
 
@@ -19,6 +19,7 @@ namespace orderListPage {
     const nextOrderPageButton = document.getElementById("next-order-page-button") as HTMLButtonElement;
     const orderPageNumberInput = document.getElementById("order-page-number") as HTMLInputElement;
 
+    var backend = getBackendAddress();
     var token: string = "";
     // var tokenObj: ParsedToken = EMPTY_TOKEN;
     var pageInfo: PageInfo = new PageInfo();
@@ -63,7 +64,7 @@ namespace orderListPage {
         // console.log("Query Order:" + ORDER_ADDRESS + postfix);
 
         // query ordered list
-        fetch(ORDER_ADDRESS + postfix, {
+        fetch(ORDER_ADDRESS(backend) + postfix, {
             method: "GET"
         })
             .then((value: Response) => value.json())
@@ -101,7 +102,7 @@ namespace orderListPage {
             // "tid": order.ticket.tid,
         };
         // query ordered list
-        fetch(ORDER_ADDRESS, {
+        fetch(ORDER_ADDRESS(backend), {
             method: "PUT",
             headers: {
                 // "Content-Type": "application/json",

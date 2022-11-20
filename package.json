@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "description": "My webpack project",
-  "name": "my-webpack-project",
+  "description": "ServiceClient",
+  "name": "service-client",
   "scripts": {
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",
@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
     "@types/js-cookie": "^3.0.2",
+    "@types/qrcode": "^1.5.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "crypto-js": "^4.1.1",
-    "js-cookie": "^3.0.1"
+    "js-cookie": "^3.0.1",
+    "qrcode": "^1.5.1"
   }
 }

@@ -6,6 +6,18 @@
     word-break: break-all;
 }
 
+.big-flex-div {
+    width: 100vw;
+    /* max-width: 976px; */
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
 .element-inline {
     display: inline-block;
 }
@@ -18,6 +30,19 @@ button:hover {
 button:active {
     color: whitesmoke;
     background-color: black;
+}
+
+.button-large {
+    padding: 1rem;
+    margin: 0.5rem 0rem;
+
+    border-radius: 0%;
+    border-width: 2px;
+    background-color: transparent;
+    color: black;
+
+    font: inherit;
+    font-size: large;
 }
 
 .button-medium {
