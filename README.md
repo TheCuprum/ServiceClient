@@ -7,15 +7,15 @@ Web pages are in `pages/`, corresponding CSS style sheets are in `pages/styles/`
 
 Here are 4 pages: **index**, **login**, **order_list** and **transaction**. Each of them are single-page web application, sufficient data such as user tokens are shared via cookies.
 
-### Sytle Sheets
+### Style Sheets
 
 `common.css`, `common_small.css` and `common_complex.css` are styles that used in common among the project.
 
-`{page_name}-style.css` are styles that affect specific elements on corrsponding pages.
+`{page_name}-style.css` are styles that affect specific elements on corresponding  pages.
 
 ### Scripts
 
-`util.ts` contains funtions that used widely in this project. `config.ts` and `datatypes.ts` contains important constants and classes for other code to use.
+`util.ts` contains functions that used widely in this project. `config.ts` and `datatypes.ts` contains important constants and classes for other code to use.
 
 `{page_name}.ts` are scripts for each page. Maily divided into 4 parts: constants and global variables, functions, code main body and event handler registration.
 
@@ -27,7 +27,7 @@ Here are 4 pages: **index**, **login**, **order_list** and **transaction**. Each
 - order_list
   - A page for displaying what tickets the user have bought, users can book a new ticket by clicking "New Transaction" or cancel an existing order by selecting unwanted orders and clicking "Delete Selected" button.
 - transaction
-  - A page for displaying available tickets, users can choose a ticket to buy by selecting a ticket and click "Choose Ticket" button, then he or she can pay for the ticket by clicking "Buy Ticket" or discard this operation by clicking "Discard" button. Of course the system doen't have and cannot have the functionality of trading with real money, so this process is simluated by clicking the "Buy Ticket" button.
+  - A page for displaying available tickets, users can choose a ticket to buy by selecting a ticket and click "Choose Ticket" button, then he or she can pay for the ticket by clicking "Buy Ticket" or discard this operation by clicking "Discard" button. Of course, the system doesn't have and cannot have the functionality of trading with real money, so this process is simulated  by clicking the "Buy Ticket" button.
 
 ## Core Dependencies
 
