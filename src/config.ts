@@ -30,7 +30,7 @@ export const TICKET_TABLE_KEYS: string[] = [
     "tdepr",
     "tdest",
     "tdate",
-    "remain",
+    "count",
     "price",
 ];
 

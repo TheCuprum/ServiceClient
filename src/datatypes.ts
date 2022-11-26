@@ -25,11 +25,11 @@ export class Ticket {
 
 export class TicketEntry {
     ticket: Ticket;
-    remain: number;
+    count: number;
 
     constructor(t: Ticket = new Ticket(), remain: number) {
         this.ticket = t;
-        this.remain = remain;
+        this.count = remain;
     }
 }
 
@@ -40,7 +40,7 @@ export class TicketEntryFlat {
     tdest: string = "";
     tdate: string = "";
     price: number = 0;
-    remain: number = 0;
+    count: number = 0;
 
     constructor(e: TicketEntry) {
         this.tid = e.ticket.tid;
@@ -49,7 +49,7 @@ export class TicketEntryFlat {
         this.tdest = e.ticket.tdest;
         this.tdate = e.ticket.tdate;
         this.price = e.ticket.price;
-        this.remain = e.remain;
+        this.count = e.count;
     }
 }
 

@@ -154,7 +154,7 @@ namespace transactionPage {
             });
 
         chooseButton.addEventListener("click", (ev: Event) => {
-            // if (token != "" && selectedTicket != EMPTY_OBJECT) {
+            if (token != "" && selectedTicket != EMPTY_OBJECT) {
                 paymentMsgDiv.hidden = false;
                 confirmButton.hidden = false;
                 discardButton.hidden = false;
@@ -170,7 +170,7 @@ namespace transactionPage {
                 });
                 updatePaymentMsg(paymentMsgDiv, [paymentHint, canvas]);
                 // updatePaymentMsg(paymentMsgDiv, document.createTextNode("PLACEHOLDER"));
-            // }
+            }
         });
 
         confirmButton.addEventListener("click", (ev: Event) => {
